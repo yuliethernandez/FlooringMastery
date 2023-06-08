@@ -1,0 +1,25 @@
+
+package com.sg.flooringmastery.dao;
+
+import com.sg.flooringmastery.dto.Order;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
+
+public interface ClassFlooringDaoOrder {
+    
+    Order createOrder(Order order) throws ClassPersistenceException, FileNotFoundException, IOException;
+    
+    List<Order> getAllOrdersByDate(LocalDate date) throws ClassPersistenceException, FileNotFoundException, IOException;
+       
+    Order getOrder(int orderNumber) throws ClassPersistenceException, FileNotFoundException, IOException;
+    
+    Order editOrder(Order order) throws ClassPersistenceException;
+    
+    Order removeOrder(LocalDate date, int orderNumber) throws ClassPersistenceException, IOException;
+
+    String getNameFileOrderToday();
+    
+    boolean exportAllData() throws ClassPersistenceException, IOException, ClassNotFoundException;
+}

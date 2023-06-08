@@ -1,0 +1,2 @@
+OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
+2,Nelson 1,CA,25.00,Wood,50.00,5.15,4.75,257.5000,237.50,123.75,753.50

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+                http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="io" class="com.sg.flooringmastery.ui.UserIOImplementation" />
+
+    <bean id="daoOrder" class="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImpl" />
+    <bean id="daoProduct" class="com.sg.flooringmastery.dao.ClassFlooringDaoProductImpl" />
+    <bean id="daoState" class="com.sg.flooringmastery.dao.ClassFlooringDaoStateImpl" />
+
+    <bean id="audit" class="com.sg.flooringmastery.dao.ClassFlooringDaoWriteEntryImpl" />
+
+    <bean id="view" class="com.sg.flooringmastery.ui.ClassFlooringUserView">
+        <constructor-arg ref="io" />
+    </bean>
+
+    <bean id="service" class="com.sg.flooringmastery.service.ClassFlooringServiceImpl">
+        <constructor-arg ref="daoOrder" />
+        <constructor-arg ref="daoProduct" />
+        <constructor-arg ref="daoState" />
+        <constructor-arg ref="audit" />
+    </bean>
+
+    <bean id="controller" class="com.sg.flooringmastery.controller.FlooringController">
+        <constructor-arg ref="view" />
+        <constructor-arg ref="service" />
+    </bean>
+
+</beans>
