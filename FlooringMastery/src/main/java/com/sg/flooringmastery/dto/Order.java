@@ -193,6 +193,22 @@ public class Order {
     public String toString() {
         return "Order{" + "orderNumber=" + orderNumber + ", customerName=" + customerName + ", state=" + stateAbrev + ", product=" + product + ", area=" + area + ", materialCost=" + materialCost + ", laborCost=" + laborCost + ", total=" + total + '}';
     }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public void setStateAbrev(String stateAbrev) {
+        this.stateAbrev = stateAbrev;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public void setArea(BigDecimal area) {
+        this.area = area;
+    }
     
     
 }

@@ -42,17 +42,18 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
     @Override
     public Order createOrder(Order order) throws ClassPersistenceException, IOException {
         loadFileOrdersToday();
-        Order newOrder = listOrder.put(order.getOrderNumber(), order);
+        //Order newOrder = listOrder.put(order.getOrderNumber(), order);
         writeFileOrder(order);
-        audit.writeEntry("The Order " + order.getOrderNumber() + " have been add.");
-        return newOrder;
+        return order;
     }
 
     @Override
     public List<Order> getAllOrdersByDate(LocalDate date) throws ClassPersistenceException, FileNotFoundException, IOException {
         loadFileOrdersByDate(date);
-        return listOrder.values().stream()
+        List<Order> listByDate = listOrder.values().stream()
                 .collect(Collectors.toCollection(ArrayList::new));
+        listOrder = new HashMap<>();
+        return listByDate;
     }
     
     
@@ -63,13 +64,16 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
     }
 
     @Override
-    public Order editOrder(Order order) throws ClassPersistenceException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Order editOrder(Order order, LocalDate dateOrder) throws ClassPersistenceException, IOException {
+        loadFileOrdersByDate(dateOrder);
+        Order newOrder = listOrder.put(order.getOrderNumber(), order);        
+        writeFileOrderFile(getFileDirByDate(dateOrder));
+        return newOrder;
     }
 
     @Override
     public Order removeOrder(LocalDate date, int orderNumber) throws ClassPersistenceException, IOException {
-        loadFileOrdersByDate(date);
+        //loadFileOrdersByDate(date);
         /*for(Order o: listOrder.values()){
             System.out.println("The object is " + o.getCustomerName());            
         }*/
@@ -78,14 +82,24 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
         String formatted = date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
         String dirFile = "Files\\Orders\\Orders_" + formatted.replaceAll("-", "")+".txt";
         writeFileOrderFile(dirFile);
-        
+        listOrder = new HashMap<>();
         return order;
     }
 
     @Override
-    public Order getOrder(int orderNumber) throws ClassPersistenceException, FileNotFoundException, IOException {
-        loadFileOrders();
-        return listOrder.get(orderNumber);
+    public Order getOrder(int orderNumber, LocalDate dateOrder) throws ClassPersistenceException, FileNotFoundException, IOException {
+        loadFileOrdersByDate(dateOrder);
+        Order order = listOrder.get(orderNumber);        
+        //listOrder = new HashMap<>();
+        return order;
+    }
+    
+    @Override
+    public Order getOrder(int orderNumber) throws ClassPersistenceException, FileNotFoundException, IOException {        
+        loadFileOrders();        
+        Order order = listOrder.get(orderNumber);        
+        listOrder = new HashMap<>();
+        return order;
     }
 
     private void writeFileOrder(Order order) throws ClassPersistenceException, FileNotFoundException, IOException {
@@ -99,7 +113,6 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
         }        
         String orderAsText;
         //List<Order> orderList = this.getAllOrders();
-
         //for (Order currentOrder: listOrder.values()) {
             orderAsText = marshallOrder(order);
             out.println(orderAsText);
@@ -121,12 +134,12 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
         out.println(ORDER_FILE_HEADER);
 
         for (Order currentOrder: listOrder.values()) { 
-            System.out.println("Order marshalling " + currentOrder.getCustomerName());
             orderAsText = marshallOrder(currentOrder);
             out.println(orderAsText);
-            out.flush();
-            out.close();
+            out.flush();            
         }
+        out.close();
+        listOrder=new HashMap<>();
     }
         
     private void loadFileOrdersToday() throws IOException, ClassPersistenceException{
@@ -203,27 +216,33 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
     
     private void loadFileOrdersByDate(LocalDate dateFile) throws ClassPersistenceException, FileNotFoundException, IOException {
         
-        String s = dateFile.format(DateTimeFormatter.ofPattern("MM-dd-yyyy")).replace("-", "");
-        String fileDate = "Files\\Orders\\Orders_" + s + ".txt";
+        //String s = dateFile.format(DateTimeFormatter.ofPattern("MM-dd-yyyy")).replace("-", "");
+        //String fileDate = "Files/Orders/Orders_" + s + ".txt";
+        String fileDate = getFileDirByDate(dateFile);
         Scanner scanner;
 
         // Create Scanner for reading the file
-        scanner = new Scanner(new BufferedReader(new FileReader(fileDate)));
+        scanner = new Scanner(
+                new BufferedReader(
+                        new FileReader(fileDate)));
         // currentLine holds the most recent line read from the file
         String currentLine;
         // currentOrder holds the most recent order unmarshalled
         Order currentOrder;
-        currentLine = scanner.nextLine();
+        currentLine = scanner.nextLine();//For the HEADER
 
         while (scanner.hasNextLine()) {
             currentLine = scanner.nextLine();
             currentOrder = unmarshallOrder(currentLine);
             listOrder.put(currentOrder.getOrderNumber(), currentOrder);
         }
-        scanner.close();
-        
+        scanner.close();        
     }
     
+    private String getFileDirByDate(LocalDate dateFile){
+        String s = dateFile.format(DateTimeFormatter.ofPattern("MM-dd-yyyy")).replace("-", "");
+        return "Files/Orders/Orders_" + s + ".txt";
+    }
     private void loadFileOrders() throws ClassPersistenceException, FileNotFoundException, IOException {
         
         ArrayList<String> arrayListOrderFromFile = new ArrayList<>();
@@ -293,37 +312,56 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
         return file;
     }
 
-    /* public ArrayList<Order> loadAllOrder() throws ClassNotFoundException, ClassPersistenceException, FileNotFoundException {
-       ArrayList<Order> orderList = new ArrayList<Order>();
-        Scanner scanner = null;
-
-        File orderTextFile;
-        File file = new File("Files/Orders/");
-        // go through Order Folder and read files one by one
-        for (File currentFile : file.listFiles()) {
-            orderTextFile = currentFile;
-
-            try {
-                scanner = new Scanner(new BufferedReader(new FileReader(orderTextFile)));
-            } catch (FileNotFoundException e) {
-                throw new ClassNotFoundException("Could not load Orders into memory", e);
-            }
-            String currentLine;
-            Order currentOrder;
-
-            while (scanner.hasNextLine()) {
-                currentLine = scanner.nextLine();
-                currentOrder = unmarshallOrder(currentLine);
-                orderList.add(currentOrder);
-            }
-        }
-        //close Scanner
-        scanner.close();
-        return orderList;
-    }*/
     @Override
     public boolean exportAllData() throws ClassPersistenceException, IOException, FileNotFoundException, ClassNotFoundException{
 
+        File[] listFile = new File("Files/Orders").listFiles();
+        try{
+            if(listFile != null){                
+                PrintWriter out;
+                try {
+                    out = new PrintWriter(new FileWriter(EXPORT_FILE, false));
+                } catch (IOException e) {
+                    throw new ClassPersistenceException("Could not load the file's data.", e);
+                }
+                
+                out.println(ORDER_FILE_HEADER);
+                
+                for(File file: listFile){
+                    Scanner sc;
+                    try{
+                        sc = new Scanner(
+                                new BufferedReader(
+                                        new FileReader(file))
+                        );
+                    }catch(FileNotFoundException e){
+                        throw new ClassPersistenceException("Could not load the file's data.", e);
+                    }
+                    if(sc.hasNextLine()){
+                        sc.nextLine();
+                    }
+                    String currentLine;
+                    String dateString = "";
+                    while(sc.hasNextLine()){
+                        currentLine = sc.nextLine();
+                        dateString = file.getName().substring(7, 15);
+                        
+                        String year = dateString.substring(4);                        
+                        String day = dateString.substring(2, 4);                        
+                        String month= dateString.substring(0, 2);
+                        
+                        String date = month + "-" + day + "-" + year;
+                        out.println(currentLine + ", " + date);                         
+                    }
+                    sc.close(); 
+                }   
+                out.flush();
+                out.close();      
+        }
+        }catch(ClassPersistenceException e){
+            throw new ClassPersistenceException("Could not find the directory");
+        }
+        return true;   
         /*PrintWriter out;
         try {
             out = new PrintWriter(new FileWriter(EXPORT_FILE, false));
@@ -354,81 +392,5 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
         }
         out.close();            
         return true;*/
-        File[] listFile = new File("Files/Orders").listFiles();
-        System.out.println("array de file en 0" + listFile[0]);
-        try{
-            if(listFile != null){
-                
-                PrintWriter out;
-                try {
-                    out = new PrintWriter(new FileWriter(EXPORT_FILE, true));
-                } catch (IOException e) {
-                    throw new ClassPersistenceException("Could not load the file's data.", e);
-                }
-                
-                out.println(ORDER_FILE_HEADER);
-                
-                for(File file: listFile){
-                    Scanner sc;
-                    try{
-                        sc = new Scanner(
-                                new BufferedReader(
-                                        new FileReader(file))
-                        );
-                    }catch(FileNotFoundException e){
-                        throw new ClassPersistenceException("Could not load the file's data.", e);
-                    }
-                    if(sc.hasNextLine()){
-                        sc.nextLine();
-                    }
-                    String currentLine;
-                    String dateString = "";
-                    while(sc.hasNextLine()){
-                        currentLine = sc.nextLine();
-                        //String dateString = file.getName().substring(7, 15);
-                        /*String str = file.getName().substring(7, 15);
-                        char s[] = str.toCharArray();
-                        for(int i = 0; i < s.length; i++){
-                            
-                        }*/     
-                        /*public static void main(String[] args) {  
-                        String s1="Javatpoint";    
-                        String substr = s1.substring(0); // Starts with 0 and goes to end  
-                        System.out.println(substr);  
-                        String substr2 = s1.substring(5,10); // Starts from 5 and goes to 10  
-                        System.out.println(substr2);    
-                        String substr3 = s1.substring(5,15); // Returns Exception  
-                        }  
-                        Javatpoint
-                        point
-                        Exception in thread "main" java.lang.StringIndexOutOfBoundsException: begin 5, end 15, length 10
-                                                */
-                        //06072023
-                        dateString = file.getName().substring(7, 15);
-                        System.out.println("date is " + dateString);
-                        
-                        String year = dateString.substring(4);
-                        System.out.println("year is " + year);
-                        System.out.println("date is " + dateString);
-                        
-                        String day = dateString.substring(2, 4);
-                        System.out.println("day is " + day);
-                        
-                        String month= dateString.substring(0, 2);
-                        System.out.println("month is " + month);
-                        
-                        String date = month + "-" + day + "-" + year;
-                        System.out.println("date of file " + date + "\n");
-                        out.println(currentLine + ", " + date);                         
-                    }
-                    sc.close(); 
-                }   
-                out.flush();
-                out.close();      
-        }
-        }catch(ClassPersistenceException e){
-            throw new ClassPersistenceException("Could not find the directory");
-        }
-        return true;       
     }    
 }

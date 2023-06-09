@@ -13,28 +13,39 @@ import java.util.List;
 
 public interface ClassFlooringService {
     
-    Order createOrder(Order order) throws ClassPersistenceException, IOException, ClassDuplicateOrderException, ClassInvalidDataException;
+    Order createOrder(Order order) throws ClassPersistenceException, IOException, 
+            ClassDuplicateOrderException, ClassInvalidDataException;
 //ClassFlooringPersistenceException;
  
-    List<Order> getAllOrders(LocalDate date) throws ClassPersistenceException, FileNotFoundException, ClassNotFoundOrderException, IOException;
+    List<Order> getAllOrders(LocalDate date) throws ClassPersistenceException, FileNotFoundException, 
+            ClassNotFoundOrderException, IOException;
  
-    Order getOrder(int orderNumber) throws ClassPersistenceException, FileNotFoundException, IOException;
+    Order getOrder(int orderNumber, LocalDate dateOrder) throws ClassPersistenceException, 
+            FileNotFoundException, IOException;
+    
+    Order editOrder(Order order, LocalDate dateOrder) throws ClassPersistenceException, IOException;
     
     Product getProduct(String productType) throws ClassPersistenceException, FileNotFoundException;
     
     State getState(String abrev) throws ClassPersistenceException, FileNotFoundException, IOException;
     
-    List<State> getAllState() throws ClassPersistenceException, FileNotFoundException, ClassNotFoundOrderException, IOException;
+    List<State> getAllState() throws ClassPersistenceException, FileNotFoundException, 
+            ClassNotFoundOrderException, IOException;
  
-    List<Product> getAllProducts() throws ClassPersistenceException, FileNotFoundException, ClassNotFoundOrderException, IOException;
+    List<Product> getAllProducts() throws ClassPersistenceException, FileNotFoundException, 
+            ClassNotFoundOrderException, IOException;
         
     Order removeOrder(LocalDate date, int orderNumber) throws ClassPersistenceException, IOException;
     
     boolean validateDate(LocalDate date) throws ClassInvalidDataException;
+
+    void validateArea(BigDecimal area) throws ClassInvalidDataException;
     
     boolean validateCustomerName(String name) throws ClassInvalidDataException; 
     
-    BigDecimal getTaxRate(String abrevUser) throws IOException, ClassNotFoundException, ClassPersistenceException;
+    BigDecimal getTaxRate(String abrevUser) throws IOException, ClassNotFoundException, 
+            ClassPersistenceException;
 
     boolean exportData() throws IOException, ClassPersistenceException, ClassNotFoundException;
+
 }

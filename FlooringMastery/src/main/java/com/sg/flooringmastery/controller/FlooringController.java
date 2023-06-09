@@ -136,40 +136,77 @@ public class FlooringController {
         }
     }
 
-    private void editOrder() {
+    private void editOrder() throws ClassPersistenceException, IOException, ClassInvalidDataException {
         io.displayEditOrderBanner();
         //the system should ask for the date and order number
-        
+        //Get date and validate
+        LocalDate date = io.getDate();
+        //Get order Number and validate
+        int orderNumber = io.getOrderNumber();
+        Order order = service.getOrder(orderNumber, date);
+       
+        if(order != null){ 
+            
+            String productType = io.editProductType(order);
+            Product newProd = null;
+
+            if(!productType.isBlank()){
+                newProd = service.getProduct(productType);
+                //Validating the product type
+                if(newProd != null){
+                   order.setProduct(newProd); 
+                }                                
+            } 
+            Order newOrder = io.editOrder(order); 
+   
+            if(newOrder != null){
+                //Validation
+                service.validateCustomerName(order.getCustomerName());
+                service.getState(order.getStateAbrev());
+                service.getProduct(productType);
+                service.validateArea(order.getArea());
+                
+                //Displaying summary of the new Order
+                io.displaySummaryOrder(newOrder);
+                
+                //Ask for confirmation
+                String option = io.askUserConfirmation();
+                if(option.equalsIgnoreCase("Y")){   
+                    Order orderEdited = service.editOrder(order, date);
+                    //service.editOrder(order, date);
+                    if(orderEdited != null){
+                        io.displayEditSuccessSuccessfully();
+                    }
+                }
+            }                        
+        }        
     }
 
     private void removeOrder() throws ClassInvalidDataException, ClassPersistenceException, IOException {
         io.displayRemoveOrderBanner();
-        //Get date
+        //Get date and validate
         LocalDate date = io.getDate();
-        //Get order Number
+        //Get order Number and validate
         int orderNumber = io.getOrderNumber();
-        
-        ArrayList<Order> list = null;        
-        try{
-            list = (ArrayList<Order>) service.getAllOrders(date);
-            io.displayAllOrders(list);
+        Order order = service.getOrder(orderNumber, date);
+       
+        if(order != null){            
+            io.displaySummaryOrder(order);
             String option = io.askUserConfirmation();
-        
+            
             if(option.equalsIgnoreCase("Y")){
                 try{
                     Order orderDeleted = service.removeOrder(date, orderNumber);
+
                     if(orderDeleted != null){
                         io.displayremoveResult(orderDeleted);
                     }
-                }catch(ClassPersistenceException e){
+                }
+                catch(ClassPersistenceException e){
                     io.displayErrorMessage("ERROR. " + e.getMessage());
                 }
             }
-        }
-        catch(ClassPersistenceException | ClassNotFoundOrderException | IOException e){
-            io.displayErrorMessage("ERROR. " + e.getMessage());
-        }
-        
+        }   
         
     }
 

@@ -13,13 +13,15 @@ public interface ClassFlooringDaoOrder {
     
     List<Order> getAllOrdersByDate(LocalDate date) throws ClassPersistenceException, FileNotFoundException, IOException;
        
-    Order getOrder(int orderNumber) throws ClassPersistenceException, FileNotFoundException, IOException;
+    Order getOrder(int orderNumber, LocalDate dateOrder) throws ClassPersistenceException, FileNotFoundException, IOException;
     
-    Order editOrder(Order order) throws ClassPersistenceException;
+    Order editOrder(Order order, LocalDate dateOrder) throws ClassPersistenceException, IOException;
     
     Order removeOrder(LocalDate date, int orderNumber) throws ClassPersistenceException, IOException;
 
     String getNameFileOrderToday();
     
     boolean exportAllData() throws ClassPersistenceException, IOException, ClassNotFoundException;
+    
+    Order getOrder(int orderNumber) throws ClassPersistenceException, FileNotFoundException, IOException;
 }

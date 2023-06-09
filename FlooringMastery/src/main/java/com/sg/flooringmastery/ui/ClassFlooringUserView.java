@@ -1,10 +1,10 @@
-
 package com.sg.flooringmastery.ui;
 
 import com.sg.flooringmastery.dto.Order;
 import com.sg.flooringmastery.dto.Product;
 import com.sg.flooringmastery.dto.State;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -94,6 +94,31 @@ public class ClassFlooringUserView {
         return io.readString("Choose an type of product from the list: ");
     }
     
+    public Order editOrder(Order order){        
+        String name = io.readString("Enter customer name (" + order.getCustomerName() + "):");
+        if(!name.isBlank()){
+            order.setCustomerName(name);
+        }
+        
+        String state = io.readString("Enter state abreviation (" + order.getStateAbrev() + "):");
+        if(!state.isBlank()){
+            order.setStateAbrev(state);
+        }
+        BigDecimal newArea = BigDecimal.ONE;
+        String area = io.readString("Enter the area (" + order.getArea() + "):");   
+        if(!area.isBlank()){
+            newArea = new BigDecimal(area);
+            newArea = newArea.setScale(2, RoundingMode.HALF_UP);
+            order.setArea(newArea);
+        }
+        return order;
+    }
+    
+    public String editProductType(Order order){        
+        String productType = io.readString("Enter the product type (" + order.getProduct().getProductType() + "):");
+        return productType;
+    }
+    
     public String askUserConfirmation(){
         return io.readString("Please type Y for confirm the operation, or N for cancel: ");
     }
@@ -112,6 +137,36 @@ public class ClassFlooringUserView {
 
     public void displaySummaryOrder(Order order){
         io.print("* * * SUMMARY ORDER * * *");
+        String head = String.format(
+                "%20s | %20s | %10s | %10s |%10s | %10s | %10s | %20s | %20s | %20s | %10s | %10s%n", 
+                "Order's Number",
+                "Customer's Name",
+                "State",
+                "Tax Rate",
+                "Product", 
+                "Area",
+                "Cost/Square",
+                "Labor Cost/Square",
+                "Material Cost",
+                "LaborCost",
+                "Tax",
+                "Total");
+        io.print(head);
+        String orderSummary = String.format(
+                "%20s | %20s | %10s | %10s |%10s | %10s | %10s | %20s | %20s | %20s | %10s | %10s%n", 
+                order.getOrderNumber(), 
+                order.getCustomerName(), 
+                order.getStateAbrev(),
+                order.getTaxRate(),
+                order.getProduct().getProductType(), 
+                order.getArea(),
+                order.getProduct().getCostPerSquareFoot(),
+                order.getProduct().getLaborCostPerSquareFoot(),
+                order.getMaterialCost(),
+                order.getLaborCost(), 
+                order.getTax(),
+                order.getTotal());
+        io.print(orderSummary);
     }
     
     public void displayremoveResult(Order order){
@@ -137,7 +192,11 @@ public class ClassFlooringUserView {
     }
     
     public void displayAddSuccessSuccessfully() {
-    io.readString("Order successfully created.  Please hit enter to continue");
+        io.readString("Order successfully created.  Please hit enter to continue");
+    }
+    
+    public void displayEditSuccessSuccessfully() {
+        io.readString("Order successfully edited.  Please hit enter to continue");
     }
     
     public void displayExportDatasuccessfully() {

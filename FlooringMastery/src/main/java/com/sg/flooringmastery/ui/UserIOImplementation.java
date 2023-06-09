@@ -117,8 +117,7 @@ public class UserIOImplementation implements UserIO{
     @Override
     public BigDecimal readArea(String prompt) {
         BigDecimal area = BigDecimal.ZERO;
-        while(true){
-            
+        while(true){            
             try{                
                 do{
                     area = new BigDecimal(readString(prompt));
@@ -136,8 +135,7 @@ public class UserIOImplementation implements UserIO{
             catch(NumberFormatException ex){
                 print("***ERROR*** \nInvalid entry. You must enter a number.");
             }
-        }
-        
+        }        
         return area;
     }
 

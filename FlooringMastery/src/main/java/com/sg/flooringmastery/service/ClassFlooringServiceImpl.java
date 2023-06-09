@@ -14,7 +14,10 @@ import com.sg.flooringmastery.dto.Product;
 import com.sg.flooringmastery.dto.State;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 public class ClassFlooringServiceImpl implements ClassFlooringService {
@@ -41,10 +44,11 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
         validateOrderData(order);
         
         Order newOrder = daoOrder.createOrder(order);
+        write.writeEntry("ORDER NUMBER " + order.getOrderNumber() + ": CREATED ");
         
         return newOrder;
     }
-//ClassFlooringPersistenceException, FileNotFoundException, IOException
+
     @Override
     public List<Order> getAllOrders(LocalDate date) throws ClassPersistenceException, FileNotFoundException, ClassNotFoundOrderException, IOException {
         List<Order> orders = null;
@@ -56,19 +60,27 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
     }
 
     @Override
-    public Order getOrder(int orderNumber) throws ClassPersistenceException, FileNotFoundException, IOException {
-        Order order = daoOrder.getOrder(orderNumber);
+    public Order getOrder(int orderNumber, LocalDate dateOrder) throws ClassPersistenceException, FileNotFoundException, IOException {
+        Order order = daoOrder.getOrder(orderNumber, dateOrder);
         if(order == null){
-            throw new FileNotFoundException("The order with that number doesn't exist");
+            throw new FileNotFoundException("There is not order in the files with such a number");
         }
         return order;
     }
 
     @Override
+    public Order editOrder(Order order, LocalDate dateOrder) throws ClassPersistenceException, IOException {
+        Order orderEdited = daoOrder.editOrder(order, dateOrder);
+        if(orderEdited == null){
+            throw new ClassPersistenceException("Could not edit the Order " + order.getOrderNumber());
+        }
+        return orderEdited;
+    }
+    
+    @Override
     public Order removeOrder(LocalDate date, int orderNumber) throws ClassPersistenceException, IOException {
         Order order = null;
         try{
-            getOrder(orderNumber);
             order = daoOrder.removeOrder(date, orderNumber);
         }        
         catch(IOException e){
@@ -90,7 +102,7 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
     public State getState(String abrev) throws ClassPersistenceException, FileNotFoundException, IOException {
         State state = daoState.getState(abrev);
         if(state == null){
-            throw new FileNotFoundException("The state doesn't exist");
+            throw new FileNotFoundException("The state does not exist in the tax file, we cannot sell there");
         }
         return state;
     }
@@ -139,6 +151,14 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
     }
 
     @Override
+    public void validateArea(BigDecimal area) throws ClassInvalidDataException{                
+        if(area.compareTo(new BigDecimal("100")) == -1){
+            throw new ClassInvalidDataException("The area must be a positive decimal. Minimum order size is 100 sq ft.");
+        }                
+        //return true;
+    }
+    
+    @Override
     public boolean validateCustomerName(String name) throws ClassInvalidDataException {
         String regex = "^[A-Za-z0-9,. ]+$";
         Pattern pat = Pattern.compile(regex);
@@ -148,9 +168,8 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
         java.util.regex package. */
         if(name.isBlank() || !pat.matcher(name).matches()){
             throw new ClassInvalidDataException("Invalid Data, May not be blank and can only contain: [a-z][0-9][,]"); 
-        } else{
-            return true;
-        }                          
+        }
+        return true;                         
     }
 
     /*@Override

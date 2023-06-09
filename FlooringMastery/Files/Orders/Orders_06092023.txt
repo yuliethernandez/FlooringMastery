@@ -1,0 +1,4 @@
+OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
+5,Patricia,TX,204.25500000,Tile,600.00,3.50,4.15,3.50,2490.0000,204.25500000,6691.0000
+7,Sara,KY,178.200000,Wood,300.00,5.15,4.75,5.15,1425.0000,178.200000,4516.0000
+8,Mariam,TX,220.27500000,Tile,500.00,3.50,4.15,5.15,2375.0000,220.27500000,7526.0000
