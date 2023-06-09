@@ -7,15 +7,15 @@ import java.time.LocalDateTime;
 
 public class ClassFlooringDaoWriteEntryImpl implements ClassFlooringDaoWriteEntry{
 
-    private String EXPORT_FILE = "Audit.txt";
-    PrintWriter out;
+    private String AUDIT_FILE = "Audit.txt";
+    
     
     /*public ClassFlooringDaoWriteEntryImpl(String EXPORT_FILE){
         this.EXPORT_FILE = EXPORT_FILE;
     }*/
     @Override
     public void writeEntry(String entry) throws ClassPersistenceException, IOException {       
-        out = new PrintWriter(new FileWriter(EXPORT_FILE, true));
+        PrintWriter out = new PrintWriter(new FileWriter(AUDIT_FILE, true));
  
         LocalDateTime timestamp = LocalDateTime.now();
         out.println(timestamp.toString() + " : " + entry);

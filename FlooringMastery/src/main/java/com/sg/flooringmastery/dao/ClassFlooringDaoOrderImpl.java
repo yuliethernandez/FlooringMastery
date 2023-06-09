@@ -25,12 +25,12 @@ import java.util.stream.Collectors;
 
 public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
     
-    public String FILE_ORDERS = "Files\\Orders\\" + this.getNameFileOrderToday();
-    public final String ORDER_FILE_HEADER = "OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total";
-    public static final String DELIMITER = ",";    
+    private String FILE_ORDERS = "Files\\Orders\\" + this.getNameFileOrderToday();
+    private final String ORDER_FILE_HEADER = "OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total";
+    private static final String DELIMITER = ",";    
     private Map<Integer, Order> listOrder = new HashMap<>();
     private final String EXPORT_FILE = "Files\\Backup\\DataExport.txt";
-    private ClassFlooringDaoWriteEntry audit = new ClassFlooringDaoWriteEntryImpl();
+    //private ClassFlooringDaoWriteEntry audit = new ClassFlooringDaoWriteEntryImpl();
     
     public ClassFlooringDaoOrderImpl(){
     }
@@ -58,11 +58,11 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
     }
     
     
-    public List<Order> getAllOrders() throws ClassPersistenceException, FileNotFoundException, IOException {
+    /*public List<Order> getAllOrders() throws ClassPersistenceException, FileNotFoundException, IOException {
         loadFileOrders();
         return listOrder.values().stream()
                 .collect(Collectors.toCollection(ArrayList::new));
-    }
+    }*/
 
     @Override
     public Order editOrder(Order order, LocalDate dateOrder) throws ClassPersistenceException, IOException {
@@ -309,7 +309,7 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
         return orderAsText;
     }
      
-    public String getNameFileOrderToday(){
+    private String getNameFileOrderToday(){
         
         LocalDate today = LocalDate.now();
         String formatted = today.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
@@ -368,35 +368,5 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
             throw new ClassPersistenceException("Could not find the directory");
         }
         return true;   
-        /*PrintWriter out;
-        try {
-            out = new PrintWriter(new FileWriter(EXPORT_FILE, false));
-        } catch (IOException e) {
-            throw new ClassPersistenceException("Could not load the file's data.", e);
-        }
-        Scanner sc;
-        try{
-            sc = new Scanner(
-                    new BufferedReader(
-                            new FileReader(EXPORT_FILE))
-            );
-        }catch(FileNotFoundException e){
-            throw new ClassPersistenceException("Could not load the file's data.", e);
-        }
-        if(sc.hasNextLine()){
-            sc.nextLine();
-        }else{
-            out.println(ORDER_FILE_HEADER);
-        }
-        String currentLine;
-        List<Order> orderList = this.getAllOrders();
-
-        for (Order currentOrder: orderList) { 
-            currentLine = marshallOrder(currentOrder);
-            out.println(currentLine);
-            out.flush();                
-        }
-        out.close();            
-        return true;*/
     }    
 }

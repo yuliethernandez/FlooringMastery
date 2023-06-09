@@ -18,8 +18,6 @@ public interface ClassFlooringDaoOrder {
     Order editOrder(Order order, LocalDate dateOrder) throws ClassPersistenceException, IOException;
     
     Order removeOrder(LocalDate date, int orderNumber) throws ClassPersistenceException, IOException;
-
-    String getNameFileOrderToday();
     
     boolean exportAllData() throws ClassPersistenceException, IOException, ClassNotFoundException;
     

@@ -14,10 +14,7 @@ import com.sg.flooringmastery.dto.Product;
 import com.sg.flooringmastery.dto.State;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 public class ClassFlooringServiceImpl implements ClassFlooringService {
@@ -177,18 +174,6 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
         return true;                         
     }
 
-    /*@Override
-    public boolean validateArea(BigDecimal area) throws ClassInvalidDataException {
-        BigDecimal valueComp = new BigDecimal("100");
-        if(area.compareTo(BigDecimal.ONE)== -1){
-            throw new ClassInvalidDataException("Invalid Data, the area must be positive decimal");
-        }
-        if(area.compareTo(valueComp)== 1){
-            throw new ClassInvalidDataException("Invalid Data, the minimum order size is 100 sq ft");
-        }
-        return true;
-    }*/
-
     @Override
     public BigDecimal getTaxRate(String abrevUser) throws IOException, ClassNotFoundException, ClassPersistenceException{
         return daoState.getTaxRate(abrevUser);
@@ -199,4 +184,14 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
         return daoOrder.exportAllData();
     }
 
-}
+}/*@Override
+    public boolean validateArea(BigDecimal area) throws ClassInvalidDataException {
+        BigDecimal valueComp = new BigDecimal("100");
+        if(area.compareTo(BigDecimal.ONE)== -1){
+            throw new ClassInvalidDataException("Invalid Data, the area must be positive decimal");
+        }
+        if(area.compareTo(valueComp)== 1){
+            throw new ClassInvalidDataException("Invalid Data, the minimum order size is 100 sq ft");
+        }
+        return true;
+    }*/

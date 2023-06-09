@@ -92,27 +92,7 @@ public class ClassFlooringUserView {
                 p.getLaborCostPerSquareFoot()));
         return io.readString("Choose an type of product from the list: ");
     }
-    
-    /*public Order editOrder(Order order){        
-        String name = io.readString("Enter customer name (" + order.getCustomerName() + "):");
-        if(!name.isBlank()){
-            order.setCustomerName(name);
-        }
         
-        String state = io.readString("Enter state abreviation (" + order.getStateAbrev() + "):");
-        if(!state.isBlank()){
-            order.setStateAbrev(state);
-        }
-        BigDecimal newArea = BigDecimal.ONE;
-        String area = io.readString("Enter the area (" + order.getArea() + "):");   
-        if(!area.isBlank()){
-            newArea = new BigDecimal(area);
-            newArea = newArea.setScale(2, RoundingMode.HALF_UP);
-            order.setArea(newArea);
-        }
-        return order;
-    }*/
-    
     public String editProductType(Order order){        
         String productType = io.readString("Enter the product type (" + order.getProduct().getProductType() + "):");
         return productType;

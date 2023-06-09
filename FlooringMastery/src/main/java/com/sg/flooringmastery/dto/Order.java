@@ -92,8 +92,6 @@ public class Order {
         BigDecimal matCost = new BigDecimal(BigInteger.ONE);
         BigDecimal costPerSquareFoot = this.getProduct().getCostPerSquareFoot();                
         return matCost.multiply(this.getArea()).multiply(costPerSquareFoot).setScale(2, RoundingMode.HALF_UP);
-        //matCost = matCost.setScale(2, RoundingMode.HALF_UP);
-        //return matCost;
     }
 
     //LaborCost = (Area * LaborCostPerSquareFoot)
@@ -101,8 +99,6 @@ public class Order {
         BigDecimal labCost = new BigDecimal(BigInteger.ONE);
         BigDecimal laborCostPerSquareFoot = this.getProduct().getLaborCostPerSquareFoot();   
         return labCost.multiply(this.getArea()).multiply(laborCostPerSquareFoot).setScale(2, RoundingMode.HALF_UP);
-        //labCost = labCost.setScale(2, RoundingMode.HALF_UP);
-        //return labCost;
     }
     
     //Tax = (MaterialCost + LaborCost)*(TaxRate/100), Tax rates are stored as whole numbers
@@ -116,9 +112,6 @@ public class Order {
         tax = matCost.add(labCost);
         //tax *=(TaxRate/100)
         return tax.multiply(taxRateDivBy100).setScale(2, RoundingMode.HALF_UP);
-        //tax = tax.setScale(2, RoundingMode.HALF_UP);
-        //return the value
-        //return tax;
     }
     
     //Total = (MaterialCost + LaborCost + Tax)
@@ -128,9 +121,6 @@ public class Order {
         BigDecimal labCost = this.getLaborCost();
         BigDecimal matCost = this.getMaterialCost();
         return total.add(matCost).add(labCost).add(matCost).setScale(2, RoundingMode.HALF_UP);
-        //total = total.setScale(2, RoundingMode.HALF_UP);
-        //return the total
-        //return  total;
     }
 
     @Override
