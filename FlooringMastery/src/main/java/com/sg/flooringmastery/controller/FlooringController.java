@@ -29,37 +29,42 @@ public class FlooringController {
     }
 
     public void run() throws ClassPersistenceException, FileNotFoundException, ClassNotFoundOrderException, IOException, ClassDuplicateOrderException, ClassInvalidDataException, ClassNotFoundException {
-        while(true){
+        try{        
+            while(true){            
+                int opt = io.mainMenuUserStories();
+
+                switch (opt) {
+                  case 1:{
+                      displayOrders();
+                      break;
+                  }
+                  case 2:{
+                      createOrder();
+                      break;
+                  }
+                  case 3:{
+                      editOrder();
+                      break;
+                  }
+                  case 4:{
+                      removeOrder();
+                      break;
+                  }
+                  case 5:{
+                      this.exportAllData();
+                      break;
+                  }
+                  case 6:{
+                      exit();
+                      break;
+                  }
+              }
+            }  
+        }
+        catch(ClassPersistenceException | ClassNotFoundOrderException | IOException | ClassDuplicateOrderException | ClassInvalidDataException | ClassNotFoundException e){
             
-            int opt = io.mainMenuUserStories();
-            
-            switch (opt) {
-              case 1:{
-                  displayOrders();
-                  break;
-              }
-              case 2:{
-                  createOrder();
-                  break;
-              }
-              case 3:{
-                  editOrder();
-                  break;
-              }
-              case 4:{
-                  removeOrder();
-                  break;
-              }
-              case 5:{
-                  this.exportAllData();
-                  break;
-              }
-              case 6:{
-                  exit();
-                  break;
-              }
-          }
-        }  
+        }
+        
         
     }
 
@@ -104,8 +109,9 @@ public class FlooringController {
                 state = service.getState(abrevUser);
             }while(state == null);
             BigDecimal taxRate = service.getTaxRate(abrevUser); 
+            System.out.println("taxRate " + taxRate);
             taxRate = taxRate.setScale(2, RoundingMode.HALF_UP);
-            
+            System.out.println("taxRate con setScale "+ taxRate);
             //Showing the list of Products for choose  
             String prodT = "";
             Product prod;
@@ -119,8 +125,9 @@ public class FlooringController {
             
             //Validating Area
             BigDecimal area = io.getArea();
+            System.out.println("area " + area);
             area = area.setScale(2, RoundingMode.HALF_UP);
-
+            System.out.println("area con setscale " + area);
             Order newOrder = new Order(orderNumber, customerName, abrevUser, taxRate, prod, area);
 
             Order order = service.createOrder(newOrder);
@@ -142,33 +149,102 @@ public class FlooringController {
         //Get date and validate
         LocalDate date = io.getDate();
         //Get order Number and validate
+        Order order = null;
         int orderNumber = io.getOrderNumber();
-        Order order = service.getOrder(orderNumber, date);
+        try{
+            order = service.getOrder(orderNumber, date);
+        }
+        catch(FileNotFoundException e){
+            io.displayErrorMessage("ERROR " + e.getMessage());
+        }
        
-        if(order != null){ 
-            
-            String productType = io.editProductType(order);
+        if(order != null){  
+            //Validatin Product
             Product newProd = null;
+            String productType = io.editProductType(order);
+            try{
+                if(!productType.isBlank()){
+                    //Validating the product type
+                    newProd = service.getProduct(productType);                
+                    if(newProd != null){
+                       order.setProduct(newProd); 
+                    }                                
+                } 
+            }catch(FileNotFoundException e){
+                io.displayErrorMessage("ERROR " + e.getMessage());
+            }
+            String newCustomerName = io.editOrderNewName(order.getCustomerName());
+            try{
+                if(!newCustomerName.isBlank()){
+                    if(service.validateCustomerName(newCustomerName)){
+                        order.setCustomerName(newCustomerName);
+                    }                    
+                }
+            }catch(ClassInvalidDataException e){
+                io.displayErrorMessage("ERROR " + e.getMessage());
+            }
+            
+            String newState = io.editOrderNewState(order.getStateAbrev());
+            try{
+                if(!newState.isBlank()){
+                    if(service.getState(newState) != null){
+                        order.setStateAbrev(newState);
+                    }                    
+                }
+            }catch(FileNotFoundException e){
+                io.displayErrorMessage("ERROR " + e.getMessage());
+            }
+            
+            String area = io.editOrderNewArea(order.getArea().toString());
+            try{
+                if(!area.isBlank()){
+                    BigDecimal newArea = new BigDecimal(area);//BigDecimal.ONE;
+                    service.validateArea(newArea); //!= null){
+                    order.setArea(newArea); 
+                }   
+            }catch(ClassInvalidDataException e){
+                io.displayErrorMessage("ERROR " + e.getMessage());
+            }
+            //Displaying summary of the new Order
+            io.displaySummaryOrder(order); 
 
-            if(!productType.isBlank()){
-                newProd = service.getProduct(productType);
-                //Validating the product type
-                if(newProd != null){
-                   order.setProduct(newProd); 
-                }                                
-            } 
-            Order newOrder = io.editOrder(order); 
-   
-            if(newOrder != null){
-                //Validation
-                service.validateCustomerName(order.getCustomerName());
-                service.getState(order.getStateAbrev());
-                service.getProduct(productType);
-                service.validateArea(order.getArea());
-                
+            //Ask for confirmation
+            String option = io.askUserConfirmation();
+            if(option.equalsIgnoreCase("Y")){   
+                Order orderEdited = service.editOrder(order, date);
+                //service.editOrder(order, date);
+                if(orderEdited != null){
+                    io.displayEditSuccessSuccessfully();
+                }
+            }  
+            /***********************************/
+            //Order newOrder = io.editOrder(order);    
+            //if(newOrder != null){                
+                /*try{
+                    //Validation
+                    service.validateCustomerName(order.getCustomerName());
+                }catch(ClassInvalidDataException e){
+                    io.displayErrorMessage("ERROR " + e.getMessage());
+                }
+                try{
+                    service.getState(order.getStateAbrev());
+                }catch(FileNotFoundException e){
+                    io.displayErrorMessage("ERROR " + e.getMessage());
+                }
+                try{
+                    service.getProduct(productType);
+                }catch(FileNotFoundException e){
+                    io.displayErrorMessage("ERROR " + e.getMessage());
+                }
+                try{
+                    service.validateArea(order.getArea());
+                }catch(ClassInvalidDataException e){
+                    io.displayErrorMessage("ERROR " + e.getMessage());
+                }
+                    
                 //Displaying summary of the new Order
-                io.displaySummaryOrder(newOrder);
-                
+                io.displaySummaryOrder(order); 
+
                 //Ask for confirmation
                 String option = io.askUserConfirmation();
                 if(option.equalsIgnoreCase("Y")){   
@@ -177,8 +253,9 @@ public class FlooringController {
                     if(orderEdited != null){
                         io.displayEditSuccessSuccessfully();
                     }
-                }
-            }                        
+                }     
+                
+            }    */                    
         }        
     }
 

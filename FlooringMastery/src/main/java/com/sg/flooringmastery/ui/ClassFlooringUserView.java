@@ -4,7 +4,6 @@ import com.sg.flooringmastery.dto.Order;
 import com.sg.flooringmastery.dto.Product;
 import com.sg.flooringmastery.dto.State;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -94,7 +93,7 @@ public class ClassFlooringUserView {
         return io.readString("Choose an type of product from the list: ");
     }
     
-    public Order editOrder(Order order){        
+    /*public Order editOrder(Order order){        
         String name = io.readString("Enter customer name (" + order.getCustomerName() + "):");
         if(!name.isBlank()){
             order.setCustomerName(name);
@@ -112,7 +111,7 @@ public class ClassFlooringUserView {
             order.setArea(newArea);
         }
         return order;
-    }
+    }*/
     
     public String editProductType(Order order){        
         String productType = io.readString("Enter the product type (" + order.getProduct().getProductType() + "):");
@@ -124,15 +123,15 @@ public class ClassFlooringUserView {
     }
     
     public void displayAddOrderBanner(){
-        io.print("* * * ADD ORDER * * *");
+        io.print("= = =  ADD ORDER = = = ");
     }
     
     public void displayEditOrderBanner(){
-        io.print("* * * EDIT ORDER * * *");
+        io.print("= = = EDIT ORDER = = = ");
     }
     
     public void displayRemoveOrderBanner(){
-        io.print("* * * REMOVE ORDER * * *");
+        io.print("= = = REMOVE ORDER = = = ");
     }
 
     public void displaySummaryOrder(Order order){
@@ -204,7 +203,7 @@ public class ClassFlooringUserView {
     }
     
     public void displayMessageEnd(){
-        io.print("\n===  PROGRAM FINISHED === \n");
+        io.print("\n= = =  PROGRAM FINISHED = = = \n");
     }
     
     public void displayErrorMessage(String message){
@@ -213,5 +212,18 @@ public class ClassFlooringUserView {
 
     public LocalDate getDate() {
         return io.readDate("Enter the date in format [MM-DD-YYYY]: ");
+    }
+
+    public String editOrderNewName(String name){        
+        String newName = io.readString("Enter customer name (" + name + "):");      
+        return newName;
+    }
+    public String editOrderNewState(String state){      
+        String newState = io.readString("Enter state abreviation (" + state + "):");
+        return newState;
+    }
+    public String editOrderNewArea(String area){        
+        String newArea = io.readString("Enter the area (" + area + "):");   
+        return area;
     }
 }

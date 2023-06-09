@@ -43,6 +43,7 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
     public Order createOrder(Order order) throws ClassPersistenceException, IOException {
         loadFileOrdersToday();
         //Order newOrder = listOrder.put(order.getOrderNumber(), order);
+        System.out.println("order in orderDao " + order.getTotal());
         writeFileOrder(order);
         return order;
     }
@@ -88,7 +89,11 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
 
     @Override
     public Order getOrder(int orderNumber, LocalDate dateOrder) throws ClassPersistenceException, FileNotFoundException, IOException {
-        loadFileOrdersByDate(dateOrder);
+        try{
+            loadFileOrdersByDate(dateOrder);
+        }catch(ClassPersistenceException e){
+            throw new ClassPersistenceException("There is not order in the files with such a number");
+        }
         Order order = listOrder.get(orderNumber);        
         //listOrder = new HashMap<>();
         return order;
@@ -243,6 +248,7 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
         String s = dateFile.format(DateTimeFormatter.ofPattern("MM-dd-yyyy")).replace("-", "");
         return "Files/Orders/Orders_" + s + ".txt";
     }
+    
     private void loadFileOrders() throws ClassPersistenceException, FileNotFoundException, IOException {
         
         ArrayList<String> arrayListOrderFromFile = new ArrayList<>();

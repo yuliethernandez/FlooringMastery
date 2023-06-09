@@ -91,18 +91,18 @@ public class Order {
     public BigDecimal calculateMaterialCost() {
         BigDecimal matCost = new BigDecimal(BigInteger.ONE);
         BigDecimal costPerSquareFoot = this.getProduct().getCostPerSquareFoot();                
-        matCost = matCost.multiply(this.getArea()).multiply(costPerSquareFoot);
-        matCost.setScale(2, RoundingMode.HALF_UP);
-        return matCost;
+        return matCost.multiply(this.getArea()).multiply(costPerSquareFoot).setScale(2, RoundingMode.HALF_UP);
+        //matCost = matCost.setScale(2, RoundingMode.HALF_UP);
+        //return matCost;
     }
 
     //LaborCost = (Area * LaborCostPerSquareFoot)
     public BigDecimal calculateLaborCost() {
         BigDecimal labCost = new BigDecimal(BigInteger.ONE);
         BigDecimal laborCostPerSquareFoot = this.getProduct().getLaborCostPerSquareFoot();   
-        labCost = labCost.multiply(this.getArea()).multiply(laborCostPerSquareFoot);
-        labCost.setScale(2, RoundingMode.HALF_UP);
-        return labCost;
+        return labCost.multiply(this.getArea()).multiply(laborCostPerSquareFoot).setScale(2, RoundingMode.HALF_UP);
+        //labCost = labCost.setScale(2, RoundingMode.HALF_UP);
+        //return labCost;
     }
     
     //Tax = (MaterialCost + LaborCost)*(TaxRate/100), Tax rates are stored as whole numbers
@@ -115,10 +115,10 @@ public class Order {
         //Tax = (MaterialCost + LaborCost)
         tax = matCost.add(labCost);
         //tax *=(TaxRate/100)
-        tax = tax.multiply(taxRateDivBy100);
-        tax.setScale(2, RoundingMode.HALF_UP);
+        return tax.multiply(taxRateDivBy100).setScale(2, RoundingMode.HALF_UP);
+        //tax = tax.setScale(2, RoundingMode.HALF_UP);
         //return the value
-        return tax;
+        //return tax;
     }
     
     //Total = (MaterialCost + LaborCost + Tax)
@@ -127,10 +127,10 @@ public class Order {
         //Calculating the total
         BigDecimal labCost = this.getLaborCost();
         BigDecimal matCost = this.getMaterialCost();
-        total = total.add(matCost).add(labCost).add(matCost);
-        total.setScale(2, RoundingMode.HALF_UP);
+        return total.add(matCost).add(labCost).add(matCost).setScale(2, RoundingMode.HALF_UP);
+        //total = total.setScale(2, RoundingMode.HALF_UP);
         //return the total
-        return  total;
+        //return  total;
     }
 
     @Override

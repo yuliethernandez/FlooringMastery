@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class UserIOImplementation implements UserIO{
@@ -140,14 +141,18 @@ public class UserIOImplementation implements UserIO{
     }
 
     @Override
-    public LocalDate readDate(String prompt) {
+    public LocalDate readDate(String prompt)  throws DateTimeParseException{
         LocalDate date;
+        String input = "";
         while(true){
+            try{
                 DateTimeFormatter format = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-                String input = readString(prompt);
+                input = readString(prompt);
                 date = LocalDate.parse(input, format);
-                break;            
-            
+                break;  
+            }catch(DateTimeParseException e){
+                print("ERROR " + input + " is not valid Date");
+            } 
         }
         return date;
     }

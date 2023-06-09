@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,8 @@ public class ClassFlooringDaoStateImpl implements ClassFlooringDaoState {
         String state= stateTokens[0];
         String stateName = stateTokens[1];
         BigDecimal taxRate = new BigDecimal(stateTokens[2]);
-
+        taxRate = taxRate.setScale(2, RoundingMode.HALF_UP);
+        
         State stateObj = new State(state, stateName, taxRate);
 
         return stateObj;

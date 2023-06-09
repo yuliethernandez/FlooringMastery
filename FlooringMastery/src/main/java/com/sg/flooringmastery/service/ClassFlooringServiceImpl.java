@@ -42,7 +42,7 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
                     + " already exists");
         }
         validateOrderData(order);
-        
+        System.out.println("order in Service " + order.getTotal());
         Order newOrder = daoOrder.createOrder(order);
         write.writeEntry("ORDER NUMBER " + order.getOrderNumber() + ": CREATED ");
         
@@ -60,7 +60,7 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
     }
 
     @Override
-    public Order getOrder(int orderNumber, LocalDate dateOrder) throws ClassPersistenceException, FileNotFoundException, IOException {
+    public Order getOrder(int orderNumber, LocalDate dateOrder) throws FileNotFoundException, IOException, ClassPersistenceException {
         Order order = daoOrder.getOrder(orderNumber, dateOrder);
         if(order == null){
             throw new FileNotFoundException("There is not order in the files with such a number");
@@ -73,6 +73,8 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
         Order orderEdited = daoOrder.editOrder(order, dateOrder);
         if(orderEdited == null){
             throw new ClassPersistenceException("Could not edit the Order " + order.getOrderNumber());
+        }else{
+            write.writeEntry("ORDER " + order.getOrderNumber() + " - EDITED");
         }
         return orderEdited;
     }
@@ -82,6 +84,9 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
         Order order = null;
         try{
             order = daoOrder.removeOrder(date, orderNumber);
+            if(order != null){
+                write.writeEntry("ORDER " + order.getOrderNumber() + " - DELETED");
+            }
         }        
         catch(IOException e){
             throw  new ClassPersistenceException("There is not orders with that date");

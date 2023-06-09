@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,10 @@ public class ClassFlooringDaoProductImpl implements ClassFlooringDaoProduct {
 
         String productType= productTokens[0];
         BigDecimal costPerSquareFoot = new BigDecimal(productTokens[1]);
+        costPerSquareFoot = costPerSquareFoot.setScale(2, RoundingMode.HALF_UP);
+        
         BigDecimal laborCostPerSquareFoot = new BigDecimal(productTokens[2]);
+        laborCostPerSquareFoot = laborCostPerSquareFoot.setScale(2, RoundingMode.HALF_UP);
 
         Product product = new Product(productType, costPerSquareFoot, laborCostPerSquareFoot);
 
