@@ -103,5 +103,10 @@ public class ClassFlooringDaoStubImpl implements ClassFlooringDaoOrder{
             return null;
         }
     }
+
+    @Override
+    public int getNextId() throws ClassPersistenceException, IOException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
 }
