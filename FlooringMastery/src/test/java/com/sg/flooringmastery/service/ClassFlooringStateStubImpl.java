@@ -12,6 +12,10 @@ import java.util.List;
 
 public class ClassFlooringStateStubImpl implements ClassFlooringDaoState{
     public State state;
+    
+    public ClassFlooringStateStubImpl(){
+        this.state = new State("CU", "Cuba", new BigDecimal("5"));
+    }
 
     @Override
     public List<State> getAllState() throws ClassPersistenceException, FileNotFoundException, IOException {

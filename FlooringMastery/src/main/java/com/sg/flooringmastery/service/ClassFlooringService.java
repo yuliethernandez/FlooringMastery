@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface ClassFlooringService {
     
-    Order createOrder(Order order) throws ClassPersistenceException, IOException, 
+    Order createOrder(Order order, LocalDate dateOrder) throws ClassPersistenceException, IOException, 
             ClassDuplicateOrderException, ClassInvalidDataException;
 //ClassFlooringPersistenceException;
  

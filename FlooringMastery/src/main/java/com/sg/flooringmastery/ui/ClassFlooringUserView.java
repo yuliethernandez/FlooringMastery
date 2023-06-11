@@ -6,6 +6,7 @@ import com.sg.flooringmastery.dto.State;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClassFlooringUserView {
     private UserIO io;
@@ -30,7 +31,7 @@ public class ClassFlooringUserView {
         return io.readInt(out, 1, 6);
     }
     
-    public void displayAllOrders(ArrayList<Order> list){
+    public void displayAllOrders(List<Order> list){
         io.print("\n* * * Display All Orders * * *");
         String head = String.format(
                 "%20s | %20s | %10s | %10s |%10s | %10s | %10s | %20s | %20s | %20s | %10s | %10s%n", 

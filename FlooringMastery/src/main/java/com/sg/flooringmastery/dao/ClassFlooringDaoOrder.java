@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ClassFlooringDaoOrder {
     
-    Order createOrder(Order order) throws ClassPersistenceException, FileNotFoundException, IOException;
+    Order createOrder(Order order, LocalDate dateOrder) throws ClassPersistenceException, FileNotFoundException, IOException;
     
     List<Order> getAllOrdersByDate(LocalDate date) throws ClassPersistenceException, FileNotFoundException, IOException;
        
@@ -22,4 +22,6 @@ public interface ClassFlooringDaoOrder {
     boolean exportAllData() throws ClassPersistenceException, IOException, ClassNotFoundException;
     
     Order getOrder(int orderNumber) throws ClassPersistenceException, FileNotFoundException, IOException;
+
+    public int getNextId() throws ClassPersistenceException, IOException;
 }

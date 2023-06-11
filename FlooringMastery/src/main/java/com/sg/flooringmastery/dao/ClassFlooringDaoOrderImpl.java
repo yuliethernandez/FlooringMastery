@@ -25,12 +25,11 @@ import java.util.stream.Collectors;
 
 public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
     
-    private String FILE_ORDERS = "Files\\Orders\\" + this.getNameFileOrderToday();
+    private String FILE_ORDERS = "Files\\Orders\\";// + this.getNameFileOrder();
     private final String ORDER_FILE_HEADER = "OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total";
     private static final String DELIMITER = ",";    
     private Map<Integer, Order> listOrder = new HashMap<>();
     private final String EXPORT_FILE = "Files\\Backup\\DataExport.txt";
-    //private ClassFlooringDaoWriteEntry audit = new ClassFlooringDaoWriteEntryImpl();
     
     public ClassFlooringDaoOrderImpl(){
     }
@@ -40,11 +39,19 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
     }    
 
     @Override
-    public Order createOrder(Order order) throws ClassPersistenceException, IOException {
-        loadFileOrdersToday();
-        //Order newOrder = listOrder.put(order.getOrderNumber(), order);
-        System.out.println("order in orderDao " + order.getTotal());
-        writeFileOrder(order);
+    public Order createOrder(Order order, LocalDate dateOrder) throws ClassPersistenceException, IOException {
+        int orderNumer = getNextId();
+        listOrder = new HashMap<>();
+        //Order newOrder = null;
+        String file = this.getFileDirByDate(dateOrder);
+        try{
+            loadFileOrdersByDate(dateOrder);            
+        }catch(ClassPersistenceException | IOException e){
+            //newOrder = listOrder.put(nextOrderNumer, order);            
+            //writeFileOrderFile(file);
+        }
+        Order newOrder = listOrder.put(orderNumer, order);  
+        writeFileOrderFile(file);
         return order;
     }
 
@@ -56,18 +63,11 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
         listOrder = new HashMap<>();
         return listByDate;
     }
-    
-    
-    /*public List<Order> getAllOrders() throws ClassPersistenceException, FileNotFoundException, IOException {
-        loadFileOrders();
-        return listOrder.values().stream()
-                .collect(Collectors.toCollection(ArrayList::new));
-    }*/
 
     @Override
     public Order editOrder(Order order, LocalDate dateOrder) throws ClassPersistenceException, IOException {
-        loadFileOrdersByDate(dateOrder);
-        Order newOrder = listOrder.put(order.getOrderNumber(), order);        
+        loadFileOrdersByDate(dateOrder);        
+        Order newOrder = listOrder.put(order.getOrderNumber(), order);  
         writeFileOrderFile(getFileDirByDate(dateOrder));
         return newOrder;
     }
@@ -79,11 +79,11 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
             System.out.println("The object is " + o.getCustomerName());            
         }*/
         Order order = listOrder.remove(orderNumber);
-        System.out.println("order deleted " + order.getCustomerName());
+        //System.out.println("order deleted " + order.getCustomerName());
         String formatted = date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
         String dirFile = "Files\\Orders\\Orders_" + formatted.replaceAll("-", "")+".txt";
         writeFileOrderFile(dirFile);
-        listOrder = new HashMap<>();
+        //listOrder = new HashMap<>();
         return order;
     }
 
@@ -106,74 +106,25 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
         listOrder = new HashMap<>();
         return order;
     }
-
-    private void writeFileOrder(Order order) throws ClassPersistenceException, FileNotFoundException, IOException {
-        PrintWriter out;
-        try {
-            out = new PrintWriter(new FileWriter(FILE_ORDERS, true));
-            
-        } catch (IOException e) {
-            throw new ClassPersistenceException(
-                    "Could not save order data.", e);
-        }        
-        String orderAsText;
-        //List<Order> orderList = this.getAllOrders();
-        //for (Order currentOrder: listOrder.values()) {
-            orderAsText = marshallOrder(order);
-            out.println(orderAsText);
-            out.flush();
-            out.close();
-        //}
-    }
     
     private void writeFileOrderFile(String file) throws ClassPersistenceException, FileNotFoundException, IOException {
         PrintWriter out;
         try {
-            out = new PrintWriter(new FileWriter(file));
-            
+            out = new PrintWriter(new FileWriter(file, false));            
         } catch (IOException e) {
             throw new ClassPersistenceException(
                     "Could not save order data.", e);
-        }        
+        }
         String orderAsText;
         out.println(ORDER_FILE_HEADER);
 
         for (Order currentOrder: listOrder.values()) { 
             orderAsText = marshallOrder(currentOrder);
-            out.println(orderAsText);
-            out.flush();            
+            out.println(orderAsText);                        
         }
+        out.flush();
         out.close();
-        listOrder=new HashMap<>();
-    }
-        
-    private void loadFileOrdersToday() throws IOException, ClassPersistenceException{
-        Scanner scanner;
-        try{
-            // Create Scanner for reading the file
-            scanner = new Scanner(new BufferedReader(new FileReader(FILE_ORDERS)));
-            // currentLine holds the most recent line read from the file
-            String currentLine;
-            // currentOrder holds the most recent order unmarshalled
-            Order currentOrder;
-            currentLine = scanner.nextLine();
-
-            while (scanner.hasNextLine()) {
-                // get the next line in the file
-                currentLine = scanner.nextLine();
-                // unmarshall the line into a Order
-                currentOrder = unmarshallOrder(currentLine);
-
-                listOrder.put(currentOrder.getOrderNumber(), currentOrder);
-            }
-            // close scanner
-            scanner.close();
-        }catch(IOException e){
-            PrintWriter out = new PrintWriter(new FileWriter(FILE_ORDERS, true));
-            out.println(ORDER_FILE_HEADER);
-            out.close();
-        }
-        
+        listOrder = new HashMap<>();
     }
 
     private Order unmarshallOrder(String orderAsText) throws ClassPersistenceException, FileNotFoundException{
@@ -212,6 +163,8 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
         
         BigDecimal total= new BigDecimal(orderTokens[11]);
         costPerSquareFoot= costPerSquareFoot.setScale(2, RoundingMode.HALF_UP);
+        
+        //LocalDate dateOrder = new BigDecimal(orderTokens[11]);
 
         Order orderFromFile = new Order(orderNumber, customerName, stateAbrev, taxRate, productObj, 
                 area, costPerSquareFoot, laborCostPerSquareFoot, materialCost, laborCost, tax, total);
@@ -223,6 +176,7 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
         
         //String s = dateFile.format(DateTimeFormatter.ofPattern("MM-dd-yyyy")).replace("-", "");
         //String fileDate = "Files/Orders/Orders_" + s + ".txt";
+        listOrder = new HashMap<>();
         String fileDate = getFileDirByDate(dateFile);
         Scanner scanner;
 
@@ -287,7 +241,7 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
         // State
         orderAsText += order.getStateAbrev() + DELIMITER;
         // TaxRate
-        orderAsText += order.getTax()+ DELIMITER;
+        orderAsText += order.getTaxRate()+ DELIMITER;
         //ProductType
         orderAsText += order.getProduct().getProductType() + DELIMITER;
         //Area
@@ -307,17 +261,8 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
 
         // We return the Order as String
         return orderAsText;
-    }
-     
-    private String getNameFileOrderToday(){
-        
-        LocalDate today = LocalDate.now();
-        String formatted = today.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
-        String file = "Orders_" + formatted.replaceAll("-", "")+".txt";
-        
-        return file;
-    }
-
+    }     
+  
     @Override
     public boolean exportAllData() throws ClassPersistenceException, IOException, FileNotFoundException, ClassNotFoundException{
 
@@ -369,4 +314,83 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
         }
         return true;   
     }    
+        
+    public List<Order> getAllOrders() throws ClassPersistenceException, FileNotFoundException, IOException {
+        loadFileOrders();
+        List<Order> listAllOrder = listOrder.values().stream()
+                .collect(Collectors.toCollection(ArrayList::new));
+        
+        return listAllOrder;
+        
+    }
+    
+    @Override
+    public int getNextId() throws ClassPersistenceException, IOException{
+        List<Order> listAllOrder = getAllOrders();
+        Order lastOrder = null;
+        int nextOrderNumber = 1;
+        if(!listAllOrder.isEmpty()){
+            int posLastOrder = listAllOrder.size();
+            posLastOrder --;
+            lastOrder = listAllOrder.get(posLastOrder); 
+            nextOrderNumber = lastOrder.getOrderNumber();
+            nextOrderNumber++;
+        }
+        return nextOrderNumber;        
+    }
+ /* private String getNameFileOrderToday(){
+        
+        LocalDate today = LocalDate.now();
+        String formatted = today.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+        String file = "Orders_" + formatted.replaceAll("-", "")+".txt";
+        
+        return file;
+    }*/
+    /*private void loadFileOrdersToday() throws IOException, ClassPersistenceException{
+        Scanner scanner;
+        try{
+            // Create Scanner for reading the file
+            scanner = new Scanner(new BufferedReader(new FileReader(FILE_ORDERS)));
+            // currentLine holds the most recent line read from the file
+            String currentLine;
+            // currentOrder holds the most recent order unmarshalled
+            Order currentOrder;
+            currentLine = scanner.nextLine();
+
+            while (scanner.hasNextLine()) {
+                // get the next line in the file
+                currentLine = scanner.nextLine();
+                // unmarshall the line into a Order
+                currentOrder = unmarshallOrder(currentLine);
+
+                listOrder.put(currentOrder.getOrderNumber(), currentOrder);
+            }
+            // close scanner
+            scanner.close();
+        }catch(IOException e){
+            PrintWriter out = new PrintWriter(new FileWriter(FILE_ORDERS, true));
+            out.println(ORDER_FILE_HEADER);
+            out.close();
+        }
+        
+    }*/
+    /*private void writeFileOrder(Order order) throws ClassPersistenceException, FileNotFoundException, IOException {
+        PrintWriter out;
+        try {
+            out = new PrintWriter(new FileWriter(FILE_ORDERS, true));
+            
+        } catch (IOException e) {
+            throw new ClassPersistenceException(
+                    "Could not save order data.", e);
+        }        
+        String orderAsText;
+        //List<Order> orderList = this.getAllOrders();
+        //for (Order currentOrder: listOrder.values()) {
+            orderAsText = marshallOrder(order);
+            out.println(orderAsText);
+            out.flush();
+            out.close();
+        //}
+    }*/
+
 }

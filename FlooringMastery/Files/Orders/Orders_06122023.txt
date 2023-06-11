@@ -1,0 +1,3 @@
+OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
+1,Yuliet,WA,9.25,Tile,200.00,3.50,4.15,3.50,830.00,141.53,2231.00
+2,Tatiana,WA,9.25,Wood,350.00,5.15,4.75,1802.50,1662.50,320.51,5268.50

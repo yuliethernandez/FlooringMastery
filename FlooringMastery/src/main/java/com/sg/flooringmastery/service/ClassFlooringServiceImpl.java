@@ -2,7 +2,6 @@
 package com.sg.flooringmastery.service;
 
 import com.sg.flooringmastery.dao.ClassFlooringDaoWriteEntry;
-import com.sg.flooringmastery.dao.ClassFlooringDaoWriteEntryImpl;
 import com.sg.flooringmastery.dao.ClassPersistenceException;
 import com.sg.flooringmastery.dto.Order;
 import java.util.List;
@@ -24,7 +23,7 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
     private final ClassFlooringDaoWriteEntry write;
 
     public ClassFlooringServiceImpl(ClassFlooringDaoOrder daoOrder, ClassFlooringDaoProduct daoProduct, 
-            ClassFlooringDaoState daoState, ClassFlooringDaoWriteEntryImpl write) {
+            ClassFlooringDaoState daoState, ClassFlooringDaoWriteEntry write) {
         this.daoOrder = daoOrder;
         this.daoProduct = daoProduct;
         this.daoState = daoState;
@@ -32,16 +31,19 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
     }
 
     @Override
-    public Order createOrder(Order order) throws ClassPersistenceException, IOException, ClassDuplicateOrderException, ClassInvalidDataException {
+    public Order createOrder(Order order, LocalDate dateOrder) throws ClassPersistenceException, IOException, ClassDuplicateOrderException, ClassInvalidDataException {
         if(daoOrder.getOrder(order.getOrderNumber()) != null){
             throw new ClassDuplicateOrderException("Could not create the Order.  Another Order with the Number: "
                     + order.getOrderNumber()
                     + " already exists");
         }
         validateOrderData(order);
-        System.out.println("order in Service " + order.getTotal());
-        Order newOrder = daoOrder.createOrder(order);
-        write.writeEntry("ORDER NUMBER " + order.getOrderNumber() + ": CREATED ");
+        
+        Order newOrder = daoOrder.createOrder(order, dateOrder);
+        if(newOrder != null){
+            write.writeEntry("ORDER NUMBER " + order.getOrderNumber() + ": CREATED ");
+        }else
+            throw new ClassPersistenceException("The Order was not created");
         
         return newOrder;
     }
@@ -118,6 +120,7 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
         if (order.getOrderNumber() == 0 || order.getCustomerName().trim().length() == 0
             || order.getStateAbrev() == null || order.getProduct() == null
             || order.getArea().compareTo(BigDecimal.ZERO)==0
+            || order.getArea().compareTo(BigDecimal.ZERO)== -1
             || daoState.getState(stateAbrev) == null
             || daoProduct.getProduct(prodType) == null) {
 
@@ -147,9 +150,13 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
     }
 
     @Override
-    public boolean validateDate(LocalDate date) throws ClassInvalidDataException {
-        LocalDate dateFuture = LocalDate.now().plusDays(1);
-        return date.isBefore(dateFuture);
+    public boolean validateDate(LocalDate date) throws ClassInvalidDataException{
+        LocalDate dateToday = LocalDate.now();
+        boolean truth = date.isAfter(dateToday);
+        if(!truth){
+            throw new ClassInvalidDataException("The date must be in the future");
+        }
+        return truth;
     }
 
     @Override
@@ -176,7 +183,11 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
 
     @Override
     public BigDecimal getTaxRate(String abrevUser) throws IOException, ClassNotFoundException, ClassPersistenceException{
-        return daoState.getTaxRate(abrevUser);
+        BigDecimal taxRate = daoState.getTaxRate(abrevUser);
+        if(taxRate == null){
+            throw new ClassNotFoundException("There is not state with that abreviation");
+        }        
+        return taxRate;
     }
 
     @Override
@@ -184,14 +195,7 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
         return daoOrder.exportAllData();
     }
 
-}/*@Override
-    public boolean validateArea(BigDecimal area) throws ClassInvalidDataException {
-        BigDecimal valueComp = new BigDecimal("100");
-        if(area.compareTo(BigDecimal.ONE)== -1){
-            throw new ClassInvalidDataException("Invalid Data, the area must be positive decimal");
-        }
-        if(area.compareTo(valueComp)== 1){
-            throw new ClassInvalidDataException("Invalid Data, the minimum order size is 100 sq ft");
-        }
-        return true;
-    }*/
+    public int getIdOrder() throws ClassPersistenceException, IOException{
+        return daoOrder.getNextId();
+    }
+}

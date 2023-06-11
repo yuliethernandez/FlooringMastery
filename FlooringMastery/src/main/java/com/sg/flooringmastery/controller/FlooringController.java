@@ -88,52 +88,54 @@ public class FlooringController {
     }
 
     private void createOrder() throws ClassPersistenceException, FileNotFoundException, 
-            IOException, ClassDuplicateOrderException, ClassInvalidDataException, ClassNotFoundOrderException, ClassNotFoundException {
+            IOException, ClassDuplicateOrderException, ClassInvalidDataException, 
+            ClassNotFoundOrderException, ClassNotFoundException {
         try{
             io.displayAddOrderBanner();
-            //Get order Number
-            int orderNumber = io.getOrderNumber();
-            //Get customer Name
-            String customerName;
-            do{
-                customerName = io.getCustomerName(); 
-            }while(!service.validateCustomerName(customerName));
+            LocalDate dateOrder = io.getDate();
             
-            //Showing the list of States for choose  
-            //Validating States
-            String abrevUser = "";
-            State state;
-            do{
-                List<State> listStates = service.getAllState();
-                abrevUser = io.displayAllStates((ArrayList<State>) listStates);
-                state = service.getState(abrevUser);
-            }while(state == null);
-            BigDecimal taxRate = service.getTaxRate(abrevUser); 
-            System.out.println("taxRate " + taxRate);
-            taxRate = taxRate.setScale(2, RoundingMode.HALF_UP);
-            System.out.println("taxRate con setScale "+ taxRate);
-            //Showing the list of Products for choose  
-            String prodT = "";
-            Product prod;
-            
-            //Validating Products
-            do{
-                List<Product> listproducts = service.getAllProducts();
-                prodT = io.displayAllProducts((ArrayList<Product>) listproducts);
-                prod = service.getProduct(prodT);
-            }while(prod == null);
-            
-            //Validating Area
-            BigDecimal area = io.getArea();
-            System.out.println("area " + area);
-            area = area.setScale(2, RoundingMode.HALF_UP);
-            System.out.println("area con setscale " + area);
-            Order newOrder = new Order(orderNumber, customerName, abrevUser, taxRate, prod, area);
+            if(service.validateDate(dateOrder)){
+                
+                //Get customer Name
+                String customerName;
+                do{
+                    customerName = io.getCustomerName(); 
+                }while(!service.validateCustomerName(customerName));
+                
+                //Get State
+                String abrevUser = "";
+                State state;
+                do{
+                    List<State> listStates = service.getAllState();
+                    abrevUser = io.displayAllStates((ArrayList<State>) listStates);
+                    state = service.getState(abrevUser);
+                }while(state == null);
+                BigDecimal taxRate = service.getTaxRate(abrevUser); 
+                taxRate = taxRate.setScale(2, RoundingMode.HALF_UP);
+                
+                //Showing the list of Products for choose  
+                String prodT = "";
+                Product prod;
 
-            Order order = service.createOrder(newOrder);
-            if(order != null){
-                io.displayAddSuccessSuccessfully();
-            }
+                //Validating Products
+                do{
+                    List<Product> listproducts = service.getAllProducts();
+                    prodT = io.displayAllProducts((ArrayList<Product>) listproducts);
+                    prod = service.getProduct(prodT);
+                }while(prod == null);
+
+                //Validating Area
+                BigDecimal area = io.getArea();
+                area = area.setScale(2, RoundingMode.HALF_UP);
+                int id = service.getIdOrder();
+                
+                Order newOrder = new Order(id, customerName, abrevUser, taxRate, prod, area);
+
+                Order order = service.createOrder(newOrder, dateOrder);
+                if(order != null){
+                    io.displayAddSuccessSuccessfully();
+                }  
+            }            
         }
         catch(ClassPersistenceException | FileNotFoundException e){
             io.displayErrorMessage("ERROR. " + e.getMessage());
@@ -216,46 +218,7 @@ public class FlooringController {
                 if(orderEdited != null){
                     io.displayEditSuccessSuccessfully();
                 }
-            }  
-            /***********************************/
-            //Order newOrder = io.editOrder(order);    
-            //if(newOrder != null){                
-                /*try{
-                    //Validation
-                    service.validateCustomerName(order.getCustomerName());
-                }catch(ClassInvalidDataException e){
-                    io.displayErrorMessage("ERROR " + e.getMessage());
-                }
-                try{
-                    service.getState(order.getStateAbrev());
-                }catch(FileNotFoundException e){
-                    io.displayErrorMessage("ERROR " + e.getMessage());
-                }
-                try{
-                    service.getProduct(productType);
-                }catch(FileNotFoundException e){
-                    io.displayErrorMessage("ERROR " + e.getMessage());
-                }
-                try{
-                    service.validateArea(order.getArea());
-                }catch(ClassInvalidDataException e){
-                    io.displayErrorMessage("ERROR " + e.getMessage());
-                }
-                    
-                //Displaying summary of the new Order
-                io.displaySummaryOrder(order); 
-
-                //Ask for confirmation
-                String option = io.askUserConfirmation();
-                if(option.equalsIgnoreCase("Y")){   
-                    Order orderEdited = service.editOrder(order, date);
-                    //service.editOrder(order, date);
-                    if(orderEdited != null){
-                        io.displayEditSuccessSuccessfully();
-                    }
-                }     
-                
-            }    */                    
+            }               
         }        
     }
 

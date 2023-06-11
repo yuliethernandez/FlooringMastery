@@ -1,0 +1,2 @@
+OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
+3,Joseph,CA,25.00,Laminate,500.00,1.75,2.10,875.00,1050.00,481.25,2801.00

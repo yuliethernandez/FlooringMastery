@@ -11,7 +11,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <exec.mainClass>com.sg.flooringmastery.flooringmastery.FlooringMastery</exec.mainClass>
     </properties>
-    <name>FlooringMastery</name>
+    <name>FlooringMasteryTest</name>
     
     <dependencies>
         <dependency>

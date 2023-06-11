@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 import java.util.Objects;
 
 public class Order {
-    private int orderNumber;
+    private int orderNumber;    
     private String customerName;
     private String stateAbrev;
     private Product product;
@@ -16,9 +16,11 @@ public class Order {
     private BigDecimal total;
     private BigDecimal taxRate;
     private BigDecimal tax;
-    //OrderNumber,CustomerName,State,TaxRate,ProductType,Area,    CostPerSquareFoot, LaborCostPerSquareFoot, MaterialCost,    LaborCost,    Tax,          Total
-    public Order(int orderNumber, String customerName, 
-            String stateAbrev, BigDecimal taxRate, Product product, BigDecimal area) {
+    
+    //CustomerName,State,TaxRate,ProductType,Area,    CostPerSquareFoot, LaborCostPerSquareFoot, MaterialCost,LaborCost,Tax, Total, date
+    public Order(int orderNumber, String customerName,
+            String stateAbrev, BigDecimal taxRate, 
+            Product product, BigDecimal area) {
         this.orderNumber = orderNumber;
         this.customerName = customerName;
         this.stateAbrev = stateAbrev;

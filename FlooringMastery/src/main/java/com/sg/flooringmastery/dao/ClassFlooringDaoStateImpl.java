@@ -50,7 +50,6 @@ public class ClassFlooringDaoStateImpl implements ClassFlooringDaoState {
         String stateName = stateTokens[1];
         BigDecimal taxRate = new BigDecimal(stateTokens[2]);
         taxRate = taxRate.setScale(2, RoundingMode.HALF_UP);
-        
         State stateObj = new State(state, stateName, taxRate);
 
         return stateObj;
@@ -87,9 +86,9 @@ public class ClassFlooringDaoStateImpl implements ClassFlooringDaoState {
                 .filter(s -> s.getStateAbbreviation().equals(abrevUser))
                 .findAny()
                 .orElse(null);
-        if(state == null){
+        /*if(state == null){
             throw new ClassNotFoundException("There is not state with that abreviation");
-        }
+        }*/
         return state.getTaxRate();
     }
 }
