@@ -1,6 +1,6 @@
 State,StateName,TaxRate
+CU,Cuba,2.45
 TX,Texas,4.45
 WA,Washington,9.25
 KY,Kentucky,6.00
 CA,Calfornia,25.00
-PA,Panama,12.50

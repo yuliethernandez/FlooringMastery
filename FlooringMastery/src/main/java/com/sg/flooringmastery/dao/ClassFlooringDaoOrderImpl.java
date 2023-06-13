@@ -1,4 +1,4 @@
-package com.sg.flooringmastery.dao;
+ package com.sg.flooringmastery.dao;
 
 import com.sg.flooringmastery.dto.Order;
 import com.sg.flooringmastery.dto.Product;
@@ -25,18 +25,24 @@ import java.util.stream.Collectors;
 
 public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
     
-    private String FILE_ORDERS = "Files\\Orders\\";// + this.getNameFileOrder();
+    private String FILE_ORDERS;
     private final String ORDER_FILE_HEADER = "OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total";
     private static final String DELIMITER = ",";    
     private Map<Integer, Order> listOrder = new HashMap<>();
-    private final String EXPORT_FILE = "Files\\Backup\\DataExport.txt";
+    private String EXPORT_FILE;
     
     public ClassFlooringDaoOrderImpl(){
+        this.FILE_ORDERS = "Files\\Orders\\";
+        this.EXPORT_FILE = "Files\\Backup\\DataExport.txt";
     }
     
+    public ClassFlooringDaoOrderImpl(String fileOrders, String fileExport){
+        this.FILE_ORDERS = fileOrders;
+        this.EXPORT_FILE = fileExport;
+    }   
     public ClassFlooringDaoOrderImpl(String fileOrders){
         this.FILE_ORDERS = fileOrders;
-    }    
+    } 
 
     @Override
     public Order createOrder(Order order, LocalDate dateOrder) throws ClassPersistenceException, IOException {
@@ -47,8 +53,6 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
         try{
             loadFileOrdersByDate(dateOrder);            
         }catch(ClassPersistenceException | IOException e){
-            //newOrder = listOrder.put(nextOrderNumer, order);            
-            //writeFileOrderFile(file);
         }
         Order newOrder = listOrder.put(orderNumer, order);  
         writeFileOrderFile(file);
@@ -79,9 +83,8 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
             System.out.println("The object is " + o.getCustomerName());            
         }*/
         Order order = listOrder.remove(orderNumber);
-        //System.out.println("order deleted " + order.getCustomerName());
         String formatted = date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
-        String dirFile = "Files\\Orders\\Orders_" + formatted.replaceAll("-", "")+".txt";
+        String dirFile =  FILE_ORDERS +"Orders_" + formatted.replaceAll("-", "")+".txt";
         writeFileOrderFile(dirFile);
         //listOrder = new HashMap<>();
         return order;
@@ -200,7 +203,8 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
     
     private String getFileDirByDate(LocalDate dateFile){
         String s = dateFile.format(DateTimeFormatter.ofPattern("MM-dd-yyyy")).replace("-", "");
-        return "Files/Orders/Orders_" + s + ".txt";
+        String file = FILE_ORDERS + "Orders_" + s + ".txt";
+        return file;
     }
     
     private void loadFileOrders() throws ClassPersistenceException, FileNotFoundException, IOException {
@@ -266,7 +270,7 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
     @Override
     public boolean exportAllData() throws ClassPersistenceException, IOException, FileNotFoundException, ClassNotFoundException{
 
-        File[] listFile = new File("Files/Orders").listFiles();
+        File[] listFile = new File(FILE_ORDERS).listFiles();
         try{
             if(listFile != null){                
                 PrintWriter out;
@@ -315,7 +319,7 @@ public class ClassFlooringDaoOrderImpl implements ClassFlooringDaoOrder  {
         return true;   
     }    
         
-    public List<Order> getAllOrders() throws ClassPersistenceException, FileNotFoundException, IOException {
+    private List<Order> getAllOrders() throws ClassPersistenceException, FileNotFoundException, IOException {
         loadFileOrders();
         List<Order> listAllOrder = listOrder.values().stream()
                 .collect(Collectors.toCollection(ArrayList::new));

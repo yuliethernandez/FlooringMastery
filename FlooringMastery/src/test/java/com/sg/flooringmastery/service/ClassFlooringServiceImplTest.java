@@ -1,15 +1,9 @@
 package com.sg.flooringmastery.service;
 
-import com.sg.flooringmastery.dao.ClassFlooringDaoOrder;
-import com.sg.flooringmastery.dao.ClassFlooringDaoOrderImpl;
-import com.sg.flooringmastery.dao.ClassFlooringDaoProduct;
-import com.sg.flooringmastery.dao.ClassFlooringDaoState;
-import com.sg.flooringmastery.dao.ClassFlooringDaoWriteEntry;
 import com.sg.flooringmastery.dto.Order;
 import com.sg.flooringmastery.dto.Product;
 import com.sg.flooringmastery.dto.State;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -21,13 +15,16 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ClassFlooringServiceImplTest {
     private ClassFlooringServiceImpl service;
     
+    private LocalDate dateTest = LocalDate.now();
     
     public ClassFlooringServiceImplTest() {
-        ClassFlooringDaoOrder daoOrder = 
+        /*ClassFlooringDaoOrder daoOrder = 
                 new ClassFlooringDaoStubImpl();
         ClassFlooringDaoProduct daoProduct = 
                 new ClassFlooringProductStubImpl();
@@ -37,7 +34,11 @@ public class ClassFlooringServiceImplTest {
                 new ClassFlooringAuditDaoStubImpl();
         
         service = 
-                new ClassFlooringServiceImpl(daoOrder, daoProduct, daoState, audit);
+                new ClassFlooringServiceImpl(daoOrder, daoProduct, daoState, audit);*/
+        
+        //Testing with DI        
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+        service = (ClassFlooringServiceImpl) ctx.getBean("serviceLayer", ClassFlooringService.class);
     }
     
     @BeforeAll
@@ -50,7 +51,7 @@ public class ClassFlooringServiceImplTest {
     
     @BeforeEach
     public void setUp() throws IOException {
-        ClassFlooringDaoOrder daoOrder = 
+        /*ClassFlooringDaoOrder daoOrder = 
                 new ClassFlooringDaoStubImpl();
         ClassFlooringDaoProduct daoProduct = 
                 new ClassFlooringProductStubImpl();
@@ -60,7 +61,10 @@ public class ClassFlooringServiceImplTest {
                 new ClassFlooringAuditDaoStubImpl();
         
         service = 
-                new ClassFlooringServiceImpl(daoOrder, daoProduct, daoState, audit);
+                new ClassFlooringServiceImpl(daoOrder, daoProduct, daoState, audit);*/
+        //Testing with DI        
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+        service = ctx.getBean("serviceLayer", ClassFlooringServiceImpl.class);
         
     }
     
@@ -88,10 +92,10 @@ public class ClassFlooringServiceImplTest {
                 new BigDecimal("25.00"),//tax, 
                 new BigDecimal("50.00"),//total);
                 new BigDecimal("500"));//BigDecimal area
-        assertEquals(order, service.createOrder(order, LocalDate.MAX));
+        assertEquals(order, service.createOrder(order, dateTest), "Sould be the same order");
         // ACT
         try {
-            service.createOrder(order, LocalDate.MAX);
+            service.createOrder(order, dateTest);
         } catch (ClassDuplicateOrderException | ClassInvalidDataException e) {
         // ASSERT
             fail("Order was valid. No exception should have been thrown. The exception was: " + e.getMessage());
@@ -119,9 +123,9 @@ public class ClassFlooringServiceImplTest {
                 new BigDecimal("50.00"),//total);
                 new BigDecimal("500"));//BigDecimal area
         // ACT
-        assertThrows(ClassInvalidDataException.class , ()-> service.createOrder(order, LocalDate.MAX));
-        assertThrows(FileNotFoundException.class , ()-> service.getOrder(150, LocalDate.MAX));
-        assertFalse(service.getAllOrders(LocalDate.MAX).contains(order),
+        assertThrows(ClassInvalidDataException.class , ()-> service.createOrder(order, dateTest));
+        assertThrows(FileNotFoundException.class , ()-> service.getOrder(1250, dateTest));
+        assertFalse(service.getAllOrders(dateTest).contains(order),
                                   "The only order should not containthe empty order");
         //With order number duplicated
         Order order2 = new Order(100, //int orderNumber
@@ -136,7 +140,7 @@ public class ClassFlooringServiceImplTest {
                 new BigDecimal("25.00"),//tax, 
                 new BigDecimal("50.00"),//total);
                 new BigDecimal("500"));//BigDecimal area
-        assertThrows(ClassDuplicateOrderException.class , ()-> service.createOrder(order2, LocalDate.MAX));
+        assertThrows(ClassDuplicateOrderException.class , ()-> service.createOrder(order2, dateTest));
     }
     
     @Test
@@ -156,7 +160,7 @@ public class ClassFlooringServiceImplTest {
                 new BigDecimal("50.00"),//total);
                 new BigDecimal("500"));//BigDecimal area
         // ACT & ASSERT
-        List<Order> listOrder = service.getAllOrders(LocalDate.MAX);
+        List<Order> listOrder = service.getAllOrders(dateTest);
         assertNotNull(listOrder, "The list of orders must be not null");
         assertEquals(1, listOrder.size(), 
                                        "Should only have one order.");
@@ -180,10 +184,10 @@ public class ClassFlooringServiceImplTest {
                 new BigDecimal("50.00"),//total);
                 new BigDecimal("500"));//BigDecimal area
         
-        assertThrows(FileNotFoundException.class , ()-> service.getOrder(5020, LocalDate.MAX));
+        assertThrows(FileNotFoundException.class , ()-> service.getOrder(5020, dateTest));
         
         // ACT & ASSERT
-        Order shouldBeMary = service.getOrder(100, LocalDate.MAX);
+        Order shouldBeMary = service.getOrder(100, dateTest);
         assertNotNull(shouldBeMary, "Getting Mary should be not null.");
         assertEquals( testMary, shouldBeMary,"Order stored as 100 should be Mary.");
 
@@ -208,17 +212,17 @@ public class ClassFlooringServiceImplTest {
                 new BigDecimal("500"));//BigDecimal area
 
         // ACT & ASSERT
-        Order shouldBeMary = service.removeOrder(LocalDate.MAX, 100);
+        Order shouldBeMary = service.removeOrder(dateTest, 100);
         assertNotNull( shouldBeMary, "Removing 100 should be not null.");
         assertEquals( testClone, shouldBeMary, "Order removed from 100 should be Mary.");
 
-        Order shouldBeNull = service.removeOrder(LocalDate.MAX, 200);    
+        Order shouldBeNull = service.removeOrder(dateTest, 200);    
         assertNull( shouldBeNull, "Removing 200 should be null.");
     }
 
     @Test
     public void testGetProduct() throws Exception {
-        Product prodTest = new Product("Brick", new BigDecimal("15"), new BigDecimal("12"));
+        Product prodTest = new Product("Brick", new BigDecimal("15.00"), new BigDecimal("12.00"));
         //String productType = "Lamp";
         assertThrows(FileNotFoundException.class , ()-> service.getProduct("Lamp"));
         
@@ -256,7 +260,7 @@ public class ClassFlooringServiceImplTest {
     @Test
     public void testGetAllProducts() throws Exception {
         // ARRANGE
-        Product product = new Product("Brick", new BigDecimal("15"), new BigDecimal("12"));
+        Product product = new Product("Brick", new BigDecimal("15.00"), new BigDecimal("12.00"));
         
         // ACT & ASSERT
         assertEquals(1, service.getAllProducts().size(), 
@@ -322,20 +326,15 @@ public class ClassFlooringServiceImplTest {
  
     @Test
     public void testEditOrder() throws Exception {        
-        /*Order order2 = service.getOrder(100, LocalDate.MAX);
+        /*Order order2 = service.getOrder(100, dateTest);
 
         order2.setCustomerName("Marybel");
         order2.setArea(BigDecimal.ONE);
 
-        service.editOrder(order2, LocalDate.MAX);
+        service.editOrder(order2, dateTest);
         //todayDate
-        Order orderEdited = service.getOrder(100, LocalDate.MAX);
+        Order orderEdited = service.getOrder(100, dateTest);
         assertEquals("Marybel", orderEdited.getCustomerName());
         assertEquals(BigDecimal.ONE, orderEdited.getArea());*/
-    }
-    
-    
-    @Test
-    public void testExportData() throws Exception {
     }
 }

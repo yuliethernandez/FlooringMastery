@@ -214,7 +214,6 @@ public class FlooringController {
             String option = io.askUserConfirmation();
             if(option.equalsIgnoreCase("Y")){   
                 Order orderEdited = service.editOrder(order, date);
-                //service.editOrder(order, date);
                 if(orderEdited != null){
                     io.displayEditSuccessSuccessfully();
                 }
@@ -228,7 +227,14 @@ public class FlooringController {
         LocalDate date = io.getDate();
         //Get order Number and validate
         int orderNumber = io.getOrderNumber();
-        Order order = service.getOrder(orderNumber, date);
+        Order order = null;
+        try{
+            order = service.getOrder(orderNumber, date);
+        }catch(ClassPersistenceException | FileNotFoundException e){
+            io.displayErrorMessage("ERROR " + e.getMessage());
+        }catch(IOException e){
+            io.displayErrorMessage("ERROR " + e.getMessage());
+        }
        
         if(order != null){            
             io.displaySummaryOrder(order);

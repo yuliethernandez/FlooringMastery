@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="7" failures="0" name="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImplTest" time="0.154" errors="0" skipped="0">
+<testsuite tests="0" failures="0" name="com.sg.flooringmastery.service.ClassFlooringDaoStubImpl" time="0" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="java.vm.version" value="11.0.19+7"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Eclipse Adoptium\jdk-11.0.19.7-hotspot\bin"/>
-    <property name="maven.multiModuleProjectDirectory" value="D:\Repo GitHub\FlooringMasteryTesting"/>
+    <property name="maven.multiModuleProjectDirectory" value="C:\Users\nelso\Downloads\Proyectos netbeans\FlooringMasteryTesting"/>
     <property name="java.vm.vendor" value="Eclipse Adoptium"/>
     <property name="java.vendor.url" value="https://adoptium.net/"/>
     <property name="guice.disable.misplaced.annotation.check" value="true"/>
@@ -14,9 +14,9 @@
     <property name="user.script" value=""/>
     <property name="user.country" value="CA"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
-    <property name="test" value="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImplTest"/>
+    <property name="test" value="com.sg.flooringmastery.service.ClassFlooringDaoStubImpl"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="user.dir" value="D:\Repo GitHub\FlooringMasteryTesting"/>
+    <property name="user.dir" value="C:\Users\nelso\Downloads\Proyectos netbeans\FlooringMasteryTesting"/>
     <property name="java.vm.compressedOopsMode" value="32-bit"/>
     <property name="java.runtime.version" value="11.0.19+7"/>
     <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
@@ -47,7 +47,7 @@
     <property name="java.class.path" value="C:\Program Files\NetBeans-16\netbeans\java\maven\boot\plexus-classworlds-2.6.0.jar"/>
     <property name="java.vm.specification.version" value="11"/>
     <property name="sun.arch.data.model" value="64"/>
-    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -Dtest=com.sg.flooringmastery.dao.ClassFlooringDaoOrderImplTest -Dmaven.ext.class.path=C:\Program Files\NetBeans-16\netbeans\java\maven-nblib\netbeans-eventspy.jar -Dfile.encoding=UTF-8 surefire:test"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -Dtest=com.sg.flooringmastery.service.ClassFlooringDaoStubImpl -Dmaven.ext.class.path=C:\Program Files\NetBeans-16\netbeans\java\maven-nblib\netbeans-eventspy.jar -Dfile.encoding=UTF-8 surefire:test"/>
     <property name="java.home" value="C:\Program Files\Eclipse Adoptium\jdk-11.0.19.7-hotspot"/>
     <property name="user.language" value="en"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
@@ -65,11 +65,4 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImplTest" name="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImplTest.testGetNextId" time="0.102"/>
-  <testcase classname="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImplTest" name="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImplTest.testCreateOrder" time="0.003"/>
-  <testcase classname="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImplTest" name="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImplTest.testRemoveOrder" time="0.008"/>
-  <testcase classname="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImplTest" name="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImplTest.testExportAllData" time="0.023"/>
-  <testcase classname="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImplTest" name="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImplTest.testGetOrderLocalDate" time="0.006"/>
-  <testcase classname="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImplTest" name="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImplTest.testGetAllOrdersByDate" time="0.008"/>
-  <testcase classname="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImplTest" name="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImplTest.testGetOrder" time="0.004"/>
 </testsuite>

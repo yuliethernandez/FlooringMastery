@@ -86,9 +86,9 @@ public class ClassFlooringDaoStateImpl implements ClassFlooringDaoState {
                 .filter(s -> s.getStateAbbreviation().equals(abrevUser))
                 .findAny()
                 .orElse(null);
-        /*if(state == null){
+        if(state == null){
             throw new ClassNotFoundException("There is not state with that abreviation");
-        }*/
+        }
         return state.getTaxRate();
     }
 }

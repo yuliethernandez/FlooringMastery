@@ -14,7 +14,7 @@ public class ClassFlooringProductStubImpl implements ClassFlooringDaoProduct{
     public Product product;
     
     public ClassFlooringProductStubImpl(){
-        this.product = new Product("Brick", new BigDecimal("15"), new BigDecimal("12"));
+        this.product = new Product("Brick", new BigDecimal("15.00"), new BigDecimal("12.00"));
     }
 
     @Override

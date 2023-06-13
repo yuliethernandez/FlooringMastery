@@ -17,18 +17,28 @@
          http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
  
     <!-- Bean definitions for Test go here -->
-    <bean id="classFlooringDao" 
+    <bean id="classFlooringDaoOrder" 
        class="com.sg.flooringmastery.dao.ClassFlooringDaoOrderImpl"/>
+    <bean id="classFlooringDaoProduct" 
+       class="com.sg.flooringmastery.dao.ClassFlooringDaoProductImpl"/>
+    <bean id="classFlooringDaoState" 
+       class="com.sg.flooringmastery.dao.ClassFlooringDaoStateImpl"/>
    
-    <bean id="classFlooringDaoStub" 
+    <bean id="classFlooringDaoOrderStub" 
        class="com.sg.flooringmastery.service.ClassFlooringDaoStubImpl"/>
+    <bean id="classFlooringDaoProductStub" 
+       class="com.sg.flooringmastery.service.ClassFlooringProductStubImpl"/>
+    <bean id="classFlooringDaoStateStub" 
+       class="com.sg.flooringmastery.service.ClassFlooringStateStubImpl"/>
    
     <bean id="writeEntryDaoStub"  
-       class="com.sg.flooringmastery.service.ClassFlooringDaoWriteEntryDaoStubImpl"/>
+       class="com.sg.flooringmastery.service.ClassFlooringAuditDaoStubImpl"/>
    
     <bean id="serviceLayer" 
        class="com.sg.flooringmastery.service.ClassFlooringServiceImpl">
-        <constructor-arg ref="classFlooringDaoStub"/>
+        <constructor-arg ref="classFlooringDaoOrderStub"/>
+        <constructor-arg ref="classFlooringDaoProductStub"/>
+        <constructor-arg ref="classFlooringDaoStateStub"/>  
         <constructor-arg ref="writeEntryDaoStub"/>           
     </bean>
    

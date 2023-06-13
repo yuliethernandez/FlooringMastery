@@ -1,0 +1,5 @@
+ProductType,CostPerSquareFoot,LaborCostPerSquareFoot
+Brick,15.00,12.00
+Laminate,1.75,2.10
+Tile,3.50,4.15
+Wood,5.15,4.75

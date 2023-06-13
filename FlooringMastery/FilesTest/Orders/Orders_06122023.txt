@@ -1,7 +1,4 @@
 OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
-100,Marybel L,CU,5.00,Brick,5.00,15.00,12.00,15.00,25.00,50.00,500
 101,Mary,CU,5.00,Brick,5.00,15.00,12.00,15.00,25.00,50.00,500
 102,Mary,CU,5.00,Brick,5.00,15.00,12.00,15.00,25.00,50.00,500
-150,Mary,CU,5.00,Brick,5.00,15.00,12.00,15.00,25.00,50.00,500
-103,Mary,CU,5.00,Brick,5.00,15.00,12.00,15.00,25.00,50.00,500
 150,Mary,CU,5.00,Brick,5.00,15.00,12.00,25.00,25.00,50.00,500

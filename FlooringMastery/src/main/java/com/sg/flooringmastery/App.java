@@ -13,9 +13,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class App {
 
     public static void main(String[] args) throws ClassPersistenceException, FileNotFoundException, ClassNotFoundOrderException, IOException, ClassDuplicateOrderException, ClassInvalidDataException, ClassNotFoundException {
-        ApplicationContext appContext = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
+        ApplicationContext appContext = 
+                new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
 
-        FlooringController controller = appContext.getBean("controller", FlooringController.class);
+        FlooringController controller = 
+                appContext.getBean("controller", FlooringController.class);
         controller.run();
     }
 }

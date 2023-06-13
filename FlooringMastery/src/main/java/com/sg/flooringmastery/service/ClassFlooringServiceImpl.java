@@ -51,7 +51,11 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
     @Override
     public List<Order> getAllOrders(LocalDate date) throws ClassPersistenceException, FileNotFoundException, ClassNotFoundOrderException, IOException {
         List<Order> orders = null;
+        try{
         orders = daoOrder.getAllOrdersByDate(date);
+        }catch(FileNotFoundException e){
+            throw new FileNotFoundException("No orders found with that date");
+        }
         if(orders.isEmpty()){
             throw new ClassNotFoundOrderException("No orders found");
         }
@@ -60,11 +64,12 @@ public class ClassFlooringServiceImpl implements ClassFlooringService {
 
     @Override
     public Order getOrder(int orderNumber, LocalDate dateOrder) throws FileNotFoundException, IOException, ClassPersistenceException {
+        //Order order = null;
         Order order = daoOrder.getOrder(orderNumber, dateOrder);
         if(order == null){
             throw new FileNotFoundException("There is not order in the files with such a number");
         }
-        return order;
+        return order;        
     }
 
     @Override

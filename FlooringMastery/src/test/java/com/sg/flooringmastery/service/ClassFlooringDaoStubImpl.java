@@ -38,6 +38,7 @@ public class ClassFlooringDaoStubImpl implements ClassFlooringDaoOrder{
 
         listOrder.put(onlyOrder.getOrderNumber(), onlyOrder);
     }
+    
     public ClassFlooringDaoStubImpl(Order order){
         this.onlyOrder = order;
     }
